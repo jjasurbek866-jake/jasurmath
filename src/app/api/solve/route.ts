@@ -71,7 +71,7 @@ export function OPTIONS() {
 
 export async function POST(request: NextRequest) {
   // --- 1. Kim so'rayapti: kalit bilanmi yoki kalitsizmi ---
-  const publicKey = process.env.PUBLIC_API_KEY;
+  const publicKey = process.env.API_ACCESS_KEY;
   const providedKey = request.headers.get("x-api-key")?.trim();
   const hasValidKey = Boolean(
     publicKey && providedKey && safeEqual(providedKey, publicKey),

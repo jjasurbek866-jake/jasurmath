@@ -24,7 +24,7 @@ npm run dev
 | `GEMINI_API_KEY` | Ha | https://aistudio.google.com/apikey dan bepul olinadi |
 | `TELEGRAM_BOT_TOKEN` | Productionda ha | @BotFather beradi. Dev rejimida bo'sh qolsa, brauzerdan Telegramsiz sinash mumkin |
 | `GEMINI_MODEL` | Yo'q | Default `gemini-3.6-flash` |
-| `PUBLIC_API_KEY` | Yo'q | Ochiq API kaliti. Bo'sh bo'lsa faqat kalitsiz rejim (soatiga 3 so'rov) |
+| `API_ACCESS_KEY` | Yo'q | Ochiq API kaliti. Bo'sh bo'lsa faqat kalitsiz rejim (soatiga 3 so'rov) |
 
 Brauzerda `http://localhost:3000` ni oching. Telegramsiz ham chat ishlaydi
 (dev rejimida tekshiruv o'chirilgan).
