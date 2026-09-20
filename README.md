@@ -140,6 +140,31 @@ faqat shu fayl o'zgaradi - route'lar tegilmaydi.
 | `maxOutputTokens` | 8192 (chat), 4096 (solve) | Uzun reja yoki bosqichli yechim kesilib qolmasin |
 | `responseSchema` | `/api/solve` da | Javob doim bir xil JSON shaklida keladi |
 
+## Deploy
+
+```bash
+npx vercel --prod          # yangi deploy yaratadi
+```
+
+**Diqqat - deploy "Ready" bo'lishi domen yangilandi degani emas.** Agar
+loyihada biror vaqt *Instant Rollback* ishlatilgan bo'lsa, `jasur-math.vercel.app`
+eski deploy'ga qotib qoladi va keyingi deploylar unga ta'sir qilmaydi. Shunda:
+
+```bash
+npx vercel ls jasur-math                    # eng yangi deployment manzilini oling
+npx vercel promote <deployment-url> --yes   # domenni o'shanga bog'lang
+```
+
+Qaysi kod internetda ekanini bilish uchun:
+
+```bash
+curl https://jasur-math.vercel.app/api/health
+# {"commit":"398d4e5","model":"gemini-3.6-flash",...}
+```
+
+`commit` maydoni lokal `git log -1` bilan mos kelmasa - deploy chiqmagan yoki
+domen eski deploy'da qolgan.
+
 ## Tekshiruv
 
 ```bash
