@@ -32,6 +32,13 @@ export function Chat() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** Xato bo'lgan so'rov - "Qayta urinish" tugmasi shuni qayta yuboradi. */
+  const [retry, setRetry] = useState<{
+    text: string;
+    hidden: boolean;
+    /** Yiqilgan so'rovning xabari - qayta urinishda tarixdan olib tashlanadi. */
+    fromId: string;
+  } | null>(null);
 
   const startedRef = useRef(false);
   const messagesRef = useRef<UiMessage[]>([]);
@@ -45,6 +52,7 @@ export function Chat() {
     if (!trimmed) return;
 
     setError(null);
+    setRetry(null);
     setBusy(true);
 
     const userMessage: UiMessage = {
@@ -88,7 +96,11 @@ export function Chat() {
           ? caught.message
           : "Nimadir noto'g'ri ketdi. Qayta urinib ko'r.",
       );
-      // Hech narsa kelmagan bo'lsa bo'sh "pufakcha" qolmasin.
+      // So'rovni eslab qolamiz - foydalanuvchi savolini qayta yozmasin.
+      setRetry({ text: trimmed, hidden, fromId: userMessage.id });
+      // Hech narsa kelmagan bo'lsa bo'sh "pufakcha" qolmasin. Chala javob
+      // kelgan bo'lsa ekranda qoladi - foydalanuvchi o'qiy oladi; tarixdan
+      // esa qayta urinish paytida tozalanadi.
       if (!answer.trim()) {
         setMessages((prev) =>
           prev.filter(
@@ -211,7 +223,38 @@ export function Chat() {
               }
             />
           ))}
-        {error && <div className="error">{error}</div>}
+        {error && (
+          <div className="error">
+            <div>{error}</div>
+            {retry && !busy && (
+              <button
+                type="button"
+                className="retry-button"
+                onClick={() => {
+                  hapticTap();
+                  const again = retry;
+                  setRetry(null);
+                  setError(null);
+                  // Yiqilgan so'rov va uning chala javobini tarixdan olib
+                  // tashlaymiz, aks holda savol ikki marta takrorlanadi.
+                  const index = messagesRef.current.findIndex(
+                    (m) => m.id === again.fromId,
+                  );
+                  if (index !== -1) {
+                    const trimmed = messagesRef.current.slice(0, index);
+                    // send() tarixni ref'dan o'qiydi, setMessages esa darrov
+                    // ta'sir qilmaydi - shuning uchun ref ham yangilanadi.
+                    messagesRef.current = trimmed;
+                    setMessages(trimmed);
+                  }
+                  void send(again.text, again.hidden);
+                }}
+              >
+                Qayta urinish
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {suggestions.length > 0 && (

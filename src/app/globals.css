@@ -507,3 +507,26 @@ body {
   margin: 14px 0 0;
   background: var(--bg);
 }
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.retry-button {
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.retry-button:active {
+  background: color-mix(in srgb, currentColor 15%, transparent);
+}
