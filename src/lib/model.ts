@@ -11,6 +11,18 @@ import type { ChatMessage } from "@/lib/types";
 
 const MODEL = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
 
+/**
+ * Gemini javob berishdan oldin "o'ylaydi". Sozlanmasa u o'zi qancha
+ * o'ylashni hal qiladi va birinchi harf ~10 soniyada chiqadi - chat uchun
+ * juda sekin. Budgetni cheklash birinchi harfni ~3 soniyaga tushiradi.
+ *
+ * Butunlay o'chirmaymiz (0): matematikada o'ylash aniqlikka yordam beradi.
+ * Chatda qisqa, /api/solve da kengroq - u yerda foydalanuvchi kursorga
+ * qarab o'tirmaydi, javob to'g'riligi esa muhimroq.
+ */
+const CHAT_THINKING_BUDGET = Number(process.env.GEMINI_CHAT_THINKING ?? 512);
+const SOLVE_THINKING_BUDGET = Number(process.env.GEMINI_SOLVE_THINKING ?? 1024);
+
 let cached: GoogleGenAI | null = null;
 
 function client(): GoogleGenAI {
@@ -74,6 +86,7 @@ export async function* streamChat(options: {
       config: {
         systemInstruction: options.system,
         maxOutputTokens: 8192,
+        thinkingConfig: { thinkingBudget: CHAT_THINKING_BUDGET },
         abortSignal: options.signal,
       },
     }),
@@ -104,6 +117,7 @@ export async function solve(options: {
       config: {
         systemInstruction: options.system,
         maxOutputTokens: 4096,
+        thinkingConfig: { thinkingBudget: SOLVE_THINKING_BUDGET },
         // Sxema modelga majburlanadi - javob doim shu shaklda keladi.
         responseMimeType: "application/json",
         responseSchema: {
